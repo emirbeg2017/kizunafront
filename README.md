@@ -25,11 +25,15 @@ A modern, professional homepage for Kizunabot, an AI-powered platform that detec
    ```bash
    npm install
    ```
-3. Start the development server:
+3. Copy `.env.example` to `.env`. The default connects to the local API:
+   ```
+   VITE_BACKEND_URL=http://127.0.0.1:5000
+   ```
+4. Start the backend on port `5000`, then start the development server:
    ```bash
    npm run dev
    ```
-4. Build for production:
+5. Build for production:
    ```bash
    npm run build
    ```

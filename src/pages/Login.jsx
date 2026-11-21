@@ -6,6 +6,11 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [notice] = useState(() => {
+    const message = sessionStorage.getItem('authNotice');
+    sessionStorage.removeItem('authNotice');
+    return message;
+  });
   const navigate = useNavigate();
   const { login } = useAuth();
 
@@ -42,6 +47,11 @@ const Login = () => {
           </h2>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          {notice && (
+            <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded" role="status">
+              {notice}
+            </div>
+          )}
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
               <span className="block sm:inline">{error}</span>

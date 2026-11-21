@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { LightBulbIcon, ChatBubbleLeftRightIcon, DocumentTextIcon, SparklesIcon } from '@heroicons/react/24/outline';
+import { useAuth } from '../context/AuthContext';
 
 const GeminiInsights = ({ analysisData, recordingId }) => {
+  const { authFetch } = useAuth();
   const [insights, setInsights] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -16,11 +18,10 @@ const GeminiInsights = ({ analysisData, recordingId }) => {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/gemini/analyze`, {
+      const response = await authFetch(`${import.meta.env.VITE_BACKEND_URL}/api/gemini/analyze`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           recordingId,
@@ -108,7 +109,7 @@ const GeminiInsights = ({ analysisData, recordingId }) => {
             content={insights.split('2. Vocabulary and Style')[1]?.split('3.')[0] || 'No data available'}
           />
           <InsightSection
-            title="Sentence Structure"
+            title="Sentence Complexity"
             icon={LightBulbIcon}
             content={insights.split('3. Sentence Structure')[1]?.split('4.')[0] || 'No data available'}
           />

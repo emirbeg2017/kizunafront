@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -7,8 +7,7 @@ export default function Signup() {
     name: '',
     email: '',
     password: '',
-    address: '',
-    birthday: ''
+    inviteCode: ''
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -24,7 +23,7 @@ export default function Signup() {
     setError('');
     setSuccess('');
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL || ''}/api/auth/signup`, {
+      const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/api/auth/signup`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form)
@@ -32,9 +31,8 @@ export default function Signup() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Signup failed');
       login(data.user, data.token);
-      navigate('/');
+      navigate('/dashboard');
       setSuccess('Signup successful!');
-      // Optionally redirect or clear form
     } catch (err) {
       setError(err.message);
     }
@@ -101,43 +99,20 @@ export default function Signup() {
                 type="password"
                 autoComplete="new-password"
                 required
+                minLength={import.meta.env.VITE_PILOT_MODE === 'true' ? 10 : 6}
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Password"
+                placeholder={import.meta.env.VITE_PILOT_MODE === 'true' ? 'Password (10+ characters)' : 'Password (6+ characters)'}
                 value={form.password}
                 onChange={handleChange}
               />
             </div>
-            <div>
-              <label htmlFor="birthday" className="sr-only">
-                Birthday
-              </label>
-              <input
-                id="birthday"
-                name="birthday"
-                type="date"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Birthday"
-                value={form.birthday}
-                onChange={handleChange}
-              />
-            </div>
-            <div>
-              <label htmlFor="address" className="sr-only">
-                Address
-              </label>
-              <input
-                id="address"
-                name="address"
-                type="text"
-                required
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                placeholder="Address"
-                value={form.address}
-                onChange={handleChange}
-              />
-            </div>
+            {import.meta.env.VITE_PILOT_MODE === 'true' && <div>
+              <label htmlFor="inviteCode" className="sr-only">Pilot invitation code</label>
+              <input id="inviteCode" name="inviteCode" type="password" required placeholder="Pilot invitation code" value={form.inviteCode} onChange={handleChange} className="appearance-none relative block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-b-md sm:text-sm" />
+            </div>}
           </div>
+
+          {import.meta.env.VITE_PILOT_MODE === 'true' && <p className="text-sm text-gray-600">Your recordings, transcripts, results and account details are stored on the pilot server. You can delete recordings in the app and request account deletion through Feedback. Please avoid including sensitive information in feedback.</p>}
 
           <div>
             <button
@@ -151,4 +126,4 @@ export default function Signup() {
       </div>
     </div>
   );
-} 
+}
